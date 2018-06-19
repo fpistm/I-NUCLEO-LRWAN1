@@ -418,6 +418,7 @@ uint8_t value_8;   /*for 8_D*/
   case  AT_CLASS:       /* not supported on V2.5 USI FW version*/
   case  AT_WDCT:        /* supported*/
   case  AT_DEFMODE:
+  case  AT_VERB:        /* Supported since V2.8 USI FW version*/
   {
     /*Format = FORMAT_8_D_PARAM;*/
     if(Marker == SET_MARKER)

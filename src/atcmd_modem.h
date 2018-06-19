@@ -144,6 +144,8 @@ typedef enum ATCmd
 
  AT_RF,               /*new one*/
 
+ AT_VERB,            /*new since firmware 2.8*/
+
  AT_END_AT
 } ATCmd_t;
 
@@ -156,7 +158,7 @@ typedef enum ATCmd
 static char *CmdTab[] = {
   "",
   "I",           /* firmware version of USI loara module*/
-  "Z",
+  "Z",           /* System Reset*/
   "+BAND",       /* +BAND country band - default 868 band*/
 
   "+JOIN",       /* +JOIN*/
@@ -220,7 +222,7 @@ static char *CmdTab[] = {
 
   "+SNR",        /* +SNR  Signal to Noice ratio*/
 
-  "+VER",         /* LoRaWAN version */
+  "+VER",         /* LoRaWAN version, if fw >= 2.8 also contains fw version */
 
   "+WDCT",        /* for update the configuration table*/
 
@@ -228,13 +230,16 @@ static char *CmdTab[] = {
 
   "+WDG",         /* for enabling/disabling the watchdog*/
 
-  "E",            /* for enabling/disabling echo mode*/
+  "E",            /* for enabling/disabling local echo mode*/
 
   "+SLEEP",       /* for enter immediatly in sleep mode (slave) following the power control setting*/
 
   "+PS",          /* for reead or set the MCU power control (Slave)*/
 
-  "+RF"           /* to change the radio-related settings */ 
+  "+RF",          /* to change the radio-related settings */
+
+  "+VERB",        /* for enabling/disabling verbose response fw >= 2.8 */
+
 };
 
 #endif
