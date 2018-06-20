@@ -87,6 +87,12 @@ bool LoraRadio::begin(HardwareSerial *serialx)
   // Local echo mode must be disabled
   Modem_AT_Cmd(AT_EXCEPT, AT_ATE, &enable);
 
+  // Verbose response must be enabled
+  enable = 1;
+  if(Modem_AT_Cmd(AT_EXCEPT, AT_VERB, &enable) == AT_ERROR_UNKNOW_COMMAND) {
+    AT_VERB_cmd = false;
+  }
+
   // Enable Lora module
   /*
     NOTE: Sometimes if the module is not ready when we call the previous command

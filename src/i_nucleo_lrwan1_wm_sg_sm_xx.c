@@ -200,13 +200,14 @@ uint16_t Len;
       HAL_Delay(1000);
       Len = at_cmd_format(Cmd, pdata, SET_MARKER);
       HAL_Status = at_cmd_send(Len);
-       if(HAL_Status != HAL_OK) {
+      if(HAL_Status != HAL_OK) {
         return (AT_UART_LINK_ERROR); /*problem on UART transmission*/
       } else {
         HAL_Delay(1000);
-        HW_UART_Modem_Flush(); //Clean unread response
+        //HW_UART_Modem_Flush(); //Clean unread response
+        Status = at_cmd_receive(NULL);
       }
-      return (AT_OK);
+      break;
   }
   case AT_EXCEPT_1:
   {
@@ -216,7 +217,7 @@ uint16_t Len;
           return (AT_UART_LINK_ERROR); /*problem on UART transmission*/
        else
        {
-         /*Status = at_cmd_receive(NULL);*/
+         HW_UART_Modem_Flush(); //Clean unread response
          return (AT_OK);
        }
   }

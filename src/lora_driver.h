@@ -66,6 +66,12 @@ typedef enum RetCode
 
 /* Exported constants --------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
+/*
+ * Depending of firmware version AT+VERB is supported or not.
+ * Introduce with fw 2.8, since this some AT response format have changed.
+ * This boolean will allow to handle those format.
+ */
+extern bool AT_VERB_cmd;
 /* Exported macros -----------------------------------------------------------*/
 
 /* wait time to request Join status*/

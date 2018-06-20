@@ -63,7 +63,7 @@ ATCmd_t gFlagException = AT_END_AT;
                          /*that is not preceded by '+" charater. This flag is */
                          /*used in the at_cmd_receive(..) function            */
 
-
+bool AT_VERB_cmd = true;
 /* Private typedef -----------------------------------------------------------*/
 
 
@@ -289,13 +289,17 @@ ATEerror_t Status;
   Status = Modem_AT_Cmd(AT_GET, AT_APPEUI, PtrTempValueFromDeviceKey );
   if (Status == 0)
   {
-    AT_VSSCANF((char*)PtrTempValueFromDeviceKey, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
-    &AppEui[0], &AppEui[1], &AppEui[2], &AppEui[3],
-    &AppEui[4], &AppEui[5], &AppEui[6], &AppEui[7]);
-    return (Status);
+    if(AT_VERB_cmd) {
+      AT_VSSCANF((char*)PtrTempValueFromDeviceKey, "%hhx,%hhx,%hhx,%hhx,%hhx,%hhx,%hhx,%hhx",
+      &AppEui[0], &AppEui[1], &AppEui[2], &AppEui[3],
+      &AppEui[4], &AppEui[5], &AppEui[6], &AppEui[7]);
+    } else {
+      AT_VSSCANF((char*)PtrTempValueFromDeviceKey, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
+      &AppEui[0], &AppEui[1], &AppEui[2], &AppEui[3],
+      &AppEui[4], &AppEui[5], &AppEui[6], &AppEui[7]);
+    }
   }
-  else
-    return (Status);
+  return (Status);
 }
 
 
@@ -324,13 +328,17 @@ ATEerror_t Status;
   Status = Modem_AT_Cmd(AT_GET, AT_DEUI, PtrTempValueFromDeviceKey );
   if (Status == 0)
   {
-    AT_VSSCANF((char*)PtrTempValueFromDeviceKey, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
-    &PtrDeviceID[0], &PtrDeviceID[1], &PtrDeviceID[2], &PtrDeviceID[3],
-    &PtrDeviceID[4], &PtrDeviceID[5], &PtrDeviceID[6], &PtrDeviceID[7]);
-    return (Status);
+    if(AT_VERB_cmd) {
+      AT_VSSCANF((char*)PtrTempValueFromDeviceKey, "%hhx,%hhx,%hhx,%hhx,%hhx,%hhx,%hhx,%hhx",
+      &PtrDeviceID[0], &PtrDeviceID[1], &PtrDeviceID[2], &PtrDeviceID[3],
+      &PtrDeviceID[4], &PtrDeviceID[5], &PtrDeviceID[6], &PtrDeviceID[7]);
+    } else {
+      AT_VSSCANF((char*)PtrTempValueFromDeviceKey, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
+      &PtrDeviceID[0], &PtrDeviceID[1], &PtrDeviceID[2], &PtrDeviceID[3],
+      &PtrDeviceID[4], &PtrDeviceID[5], &PtrDeviceID[6], &PtrDeviceID[7]);
+    }
   }
-  else
-    return (Status);
+  return (Status);
 }
 
 
