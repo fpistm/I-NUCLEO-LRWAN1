@@ -197,13 +197,12 @@ uint16_t Len;
   }
   case AT_EXCEPT:
   {
-      HAL_Delay(1000);
       Len = at_cmd_format(Cmd, pdata, SET_MARKER);
       HAL_Status = at_cmd_send(Len);
       if(HAL_Status != HAL_OK) {
         return (AT_UART_LINK_ERROR); /*problem on UART transmission*/
       } else {
-        HAL_Delay(1000);
+        //HAL_Delay(1000);
         //HW_UART_Modem_Flush(); //Clean unread response
         Status = at_cmd_receive(NULL);
       }
@@ -217,9 +216,10 @@ uint16_t Len;
           return (AT_UART_LINK_ERROR); /*problem on UART transmission*/
        else
        {
-         HW_UART_Modem_Flush(); //Clean unread response
-         return (AT_OK);
+         //HAL_Delay(1000);
+         Status = at_cmd_receive(NULL);
        }
+	   break;
   }
   default:
     DBG_PRINTF("unknow group\n\r");
@@ -531,66 +531,49 @@ uint32_t msStart;
       i = -1;
     }
 
-      /*wait up to carriage return OR the line feed marker*/
-       if (/*(response[i] =='\r') || */(response[i] == '\n'))
-       {
-        DBG_PRINTF("at_cmd_receive: %s\r\n", response);
-        if(pdata == NULL) /*return code following a SET cmd or simple AT cmd*/
-        {
-          //if (i>1)  /*return code following a SET cmd or simple AT cmd- we skip the first <cr><ln>*/
-          //{
+    /*wait up to carriage return OR the line feed marker*/
+    if (/*(response[i] =='\r') || */(response[i] == '\n')) {
+      DBG_PRINTF("at_cmd_receive: %s\r\n", response);
+      if(pdata == NULL) { /*return code following a SET cmd or simple AT cmd*/
+        i= 0;
+        ResponseComplete = 1;
+        RetCode = at_cmd_responseAnalysing(response);
+        break;
+      } else { /* returned value following a GET cmd */
+        if (i!= 0 && NoReturnCode) {
+          /*first statement to get back the return value*/
+          response[i] = '\0';
+          if (gFlagException != AT_FWVERSION) { /*see comment in loara_driver.c*/
+            ptrChr = strchr(&response[1],'=');       /*to skip the '\0''\r'*/
+            strcpy(pdata,ptrChr+1);
+          } else {
+            strcpy(pdata,&response[1]);
+            gFlagException = AT_END_AT;
+          }
+          memset(response, 0x00, strlen(response));
+          i= -1;             /*to compensate the next index iteration and restart in [0]*/
+          NoReturnCode = 0;  /*return code for the Get cmd*/
+        } else {
+          if (i>1) {
+            /*second statement to get back the return code*/
             i= 0;
-            ResponseComplete = 1;
+            ResponseComplete = 1;   /*when value + return code have been trapped*/
             RetCode = at_cmd_responseAnalysing(response);
-            break;
-          //}
-        }
-        else    /* returned value following a GET cmd */
-        {
-          if (i!= 0 && NoReturnCode)
-          {
-            /*first statement to get back the return value*/
-            response[i] = '\0';
-            if (gFlagException != AT_FWVERSION)         /*see comment in loara_driver.c*/
-            {
-              ptrChr = strchr(&response[1],'=');       /*to skip the '\0''\r'*/
-              strcpy(pdata,ptrChr+1);
-              gFlagException = AT_END_AT;
-            }
-            else
-            {
-              strcpy(pdata,&response[1]);
-            }
             memset(response, 0x00, 16);
-            i= -1;             /*to compensate the next index iteration and restart in [0]*/
-            NoReturnCode = 0;  /*return code for the Get cmd*/
-          }
-          else
-          {
-            if (i>1)
-            {
-              /*second statement to get back the return code*/
-              i= 0;
-              ResponseComplete = 1;   /*when value + return code have been trapped*/
-              RetCode = at_cmd_responseAnalysing(response);
-              memset(response, 0x00, 16);
-              break;
-            }
+            break;
           }
         }
-       }
-       else
-       {
-        if (i ==  (DATA_RX_MAX_BUFF_SIZE-1)) /* frame overflow */
-         {
-           i = 0;
-           return (AT_TEST_PARAM_OVERFLOW);
-         }
-       }
-        i++;
-      charnumber++;
+      }
+    } else {
+      if (i == (DATA_RX_MAX_BUFF_SIZE-1)) { /* frame overflow */
+        i = 0;
+          return (AT_TEST_PARAM_OVERFLOW);
+      }
+    }
+    i++;
+    charnumber++;
   }
-      return ( RetCode);                            /*version of HAL .. there was not Rx field state*/
+  return ( RetCode); /*version of HAL .. there was not Rx field state*/
 }
 
 

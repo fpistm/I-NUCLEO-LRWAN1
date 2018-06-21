@@ -80,7 +80,7 @@ bool LoRaWANNodeClass::begin(HardwareSerial *serialx, uint8_t band, uint8_t lora
   if (Modem_AT_Cmd(AT_EXCEPT, AT_VERB, &enable) != AT_OK) {
     AT_VERB_cmd = false;
   }
-
+  Serial.println(AT_VERB_cmd);
   // Enable Lora module
   /*
     NOTE: Sometimes if the module is not ready when we call the previous command
@@ -280,7 +280,7 @@ void LoRaWANNodeClass::getVersion(String *str)
 void LoRaWANNodeClass::getFWVersion(String *str)
 {
   if(str != NULL) {
-    char tmp[10];
+    char tmp[10] = {'\0'};
     Lora_GetFWVersion((uint8_t *)tmp);
     tmp[9] = '\0';
     str->concat(tmp);
@@ -297,7 +297,7 @@ void LoRaWANNodeClass::getDevAddr(String *str)
   if(str != NULL) {
     uint32_t addr;
     char cAddr[9] = {'\0'};
-    char tmp[3];
+    char tmp[3] = {'\0'};
     LoRa_GetDeviceAddress(&addr);
     keyIntToChar(cAddr, (uint8_t*)&addr, 4);
     //swap characters
@@ -318,7 +318,7 @@ void LoRaWANNodeClass::getDevAddr(String *str)
 void LoRaWANNodeClass::getNwkSKey(String *str)
 {
   if(str != NULL) {
-    uint8_t iKey[16];
+    uint8_t iKey[16] = {0};
     char cKey[33] = {'\0'};
     LoRa_GetKey(AT_NWKSKEY, iKey);
     keyIntToChar(cKey, iKey, 16);
@@ -334,7 +334,7 @@ void LoRaWANNodeClass::getNwkSKey(String *str)
 void LoRaWANNodeClass::getAppSKey(String *str)
 {
   if(str != NULL) {
-    uint8_t iKey[16];
+    uint8_t iKey[16] = {0};
     char cKey[33] = {'\0'};
     LoRa_GetKey(AT_APPSKEY, iKey);
     keyIntToChar(cKey, iKey, 16);
@@ -350,7 +350,7 @@ void LoRaWANNodeClass::getAppSKey(String *str)
 void LoRaWANNodeClass::getDevEUI(String *str)
 {
   if(str != NULL) {
-    uint8_t iKey[8];
+    uint8_t iKey[8] = {0};
     char cKey[17] = {'\0'};
     LoRa_GetDeviceID(iKey);
     keyIntToChar(cKey, iKey, 8);
@@ -366,7 +366,7 @@ void LoRaWANNodeClass::getDevEUI(String *str)
 void LoRaWANNodeClass::getAppKey(String *str)
 {
   if(str != NULL) {
-    uint8_t iKey[16];
+    uint8_t iKey[16] = {0};
     char cKey[33] = {'\0'};
     LoRa_GetKey(AT_APPKEY, iKey);
     keyIntToChar(cKey, iKey, 16);
